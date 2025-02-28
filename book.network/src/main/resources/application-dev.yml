@@ -1,8 +1,8 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/book_social_network
-        username: postgres
-        password: postgres
+        url: jdbc:postgresql://127.0.0.1:5432/book_social_network
+        username: username
+        password: password
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: true
@@ -34,4 +34,4 @@ application:
   security:
     jwt:
       secret-key: O5ZYarwNcV
-      expiration-ms: 86400000
+      expiration: 86400000

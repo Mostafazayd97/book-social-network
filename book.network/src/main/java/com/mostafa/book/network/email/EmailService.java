@@ -25,14 +25,14 @@ public class EmailService {
     @Async
     public void sendEmail (String to,
                            String subject,
-                           StringIndexOutOfBoundsException userName,
+                           String userName,
                            String ConfirmationUrl,
                            String ActivationCode,
                            EmailTemplateName emailTemplateName) throws MessagingException {
 
         String templateName ;
         if(emailTemplateName == null){
-            templateName = "activateAccount";
+            templateName = "confirm_template";
         }else{
             templateName = emailTemplateName.getName();
         }
@@ -43,9 +43,9 @@ public class EmailService {
                 StandardCharsets.UTF_8.name()
         );
         Map<String,Object> properties = new HashMap<>();
-        properties.put("userName",userName);
-        properties.put("ConfirmationUrl",ConfirmationUrl);
-        properties.put("ActivationCode",ActivationCode);
+        properties.put("username",userName);
+        properties.put("confirmationUrl",ConfirmationUrl);
+        properties.put("activation_code",ActivationCode);
         Context context = new Context();
         context.setVariables(properties);
         helper.setFrom("contact@mostafazayed.com");

@@ -1,11 +1,14 @@
 package com.mostafa.book.network.auth.service;
 
 import com.mostafa.book.network.auth.model.RegisterationRequest;
+import com.mostafa.book.network.email.EmailService;
+import com.mostafa.book.network.email.EmailTemplateName;
 import com.mostafa.book.network.role.RoleRepository;
 import com.mostafa.book.network.user.Token;
 import com.mostafa.book.network.user.TokenRepository;
 import com.mostafa.book.network.user.User;
 import com.mostafa.book.network.user.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
-    public void register(RegisterationRequest request) {
+    private final EmailService emailService;
+    public void register(RegisterationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER").orElseThrow(() -> new RuntimeException("User role not found"));
 
         var user = User.builder()
@@ -41,8 +45,17 @@ public class AuthenticationService {
 
     }
 
-    private void sendValidationEmail(User user) {
+    private void sendValidationEmail(User user) throws MessagingException {
+        String token = generateAndSaveActivationToken(user);
+        emailService.sendEmail(
+                user.getEmail(),
+                "Acrivate your account",
+                user.getFullName(),
+                "http://localhost:4200/activate?token=" + token,
+                token,
+                EmailTemplateName.ACTIVATE_ACCOUNT
 
+        );
     }
 
     private String generateAndSaveActivationToken(User user) {

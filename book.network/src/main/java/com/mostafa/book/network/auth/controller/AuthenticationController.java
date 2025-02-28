@@ -3,6 +3,7 @@ package com.mostafa.book.network.auth.controller;
 import com.mostafa.book.network.auth.model.RegisterationRequest;
 import com.mostafa.book.network.auth.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<?> register (
             @RequestBody @Valid RegisterationRequest request
-    ){
+    ) throws MessagingException {
          service.register(request);
          return ResponseEntity.accepted().build();
     }
