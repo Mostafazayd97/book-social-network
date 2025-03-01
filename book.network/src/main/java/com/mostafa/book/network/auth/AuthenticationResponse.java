@@ -1,4 +1,4 @@
-package com.mostafa.book.network.auth.model;
+package com.mostafa.book.network.auth;
 
 import lombok.Builder;
 import lombok.Getter;

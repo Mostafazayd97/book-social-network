@@ -1,9 +1,5 @@
-package com.mostafa.book.network.auth.controller;
+package com.mostafa.book.network.auth;
 
-import com.mostafa.book.network.auth.model.AuthenticationResponse;
-import com.mostafa.book.network.auth.model.LoginRequest;
-import com.mostafa.book.network.auth.model.RegisterationRequest;
-import com.mostafa.book.network.auth.service.AuthenticationService;
 import com.mostafa.book.network.user.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;

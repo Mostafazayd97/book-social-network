@@ -1,8 +1,5 @@
-package com.mostafa.book.network.auth.service;
+package com.mostafa.book.network.auth;
 
-import com.mostafa.book.network.auth.model.AuthenticationResponse;
-import com.mostafa.book.network.auth.model.LoginRequest;
-import com.mostafa.book.network.auth.model.RegisterationRequest;
 import com.mostafa.book.network.email.EmailService;
 import com.mostafa.book.network.email.EmailTemplateName;
 import com.mostafa.book.network.role.RoleRepository;
@@ -16,12 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
