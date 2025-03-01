@@ -30,7 +30,7 @@ public class EmailService {
                            String ActivationCode,
                            EmailTemplateName emailTemplateName) throws MessagingException {
 
-        String templateName ;
+        String templateName;
         if(emailTemplateName == null){
             templateName = "confirm_template";
         }else{

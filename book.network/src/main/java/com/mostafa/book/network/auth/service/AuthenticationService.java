@@ -1,21 +1,29 @@
 package com.mostafa.book.network.auth.service;
 
+import com.mostafa.book.network.auth.model.AuthenticationResponse;
+import com.mostafa.book.network.auth.model.LoginRequest;
 import com.mostafa.book.network.auth.model.RegisterationRequest;
 import com.mostafa.book.network.email.EmailService;
 import com.mostafa.book.network.email.EmailTemplateName;
 import com.mostafa.book.network.role.RoleRepository;
+import com.mostafa.book.network.security.JWTUtils;
 import com.mostafa.book.network.user.Token;
 import com.mostafa.book.network.user.TokenRepository;
 import com.mostafa.book.network.user.User;
 import com.mostafa.book.network.user.UserRepository;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -27,6 +35,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
+    private final JWTUtils jwtUtils;
     public void register(RegisterationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER").orElseThrow(() -> new RuntimeException("User role not found"));
 
@@ -82,5 +92,39 @@ public class AuthenticationService {
         }
         return token.toString();
 
+    }
+
+    public void activateUser(String token) {
+        var savedToken = tokenRepository.findByToken(token);
+        if (savedToken.isEmpty()) {
+            throw new RuntimeException("Invalid token");
+        }
+        if(LocalDateTime.now().isAfter(savedToken.get().getExpiredAt())){
+            throw new RuntimeException("Token expired");
+        }
+        var user = savedToken.get().getUser();
+        user.setEnabled(true);
+        user.setAccountLocked(false);
+        userRepository.save(user);
+    }
+
+    public AuthenticationResponse authenticate(@Valid LoginRequest request) {
+        try {
+            var auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+            var user = (User) auth.getPrincipal();
+            var claims = new HashMap<String, Object>();
+            claims.put("FullName", user.getFullName());
+            var token = jwtUtils.generateJwtToken(user, claims);
+
+            return AuthenticationResponse.builder().token(token).build();
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Log the error
+            throw new RuntimeException("Authentication failed: " + ex.getMessage(), ex);
+        }
     }
 }
